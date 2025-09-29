@@ -1,4 +1,6 @@
 
+import { Buffer } from 'buffer';
+
 // Correct AES-128 ECB implementation in TypeScript
 // This implementation follows the official AES specification exactly
 

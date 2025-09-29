@@ -1,4 +1,5 @@
 
+import { Buffer } from 'buffer';
 import { decrypt } from '@/lib/aes';
 
 self.onmessage = (e) => {
