@@ -1,46 +1,50 @@
-
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface StatusDisplayProps {
   status: 'idle' | 'processing' | 'success' | 'error';
   message: string;
+  progress?: number;
 }
 
-export function StatusDisplay({ status, message }: StatusDisplayProps) {
-  if (status === 'idle' || !message) return null;
-
-  const statusConfig = {
-    processing: {
-      icon: <Loader2 className="w-5 h-5 animate-spin" />,
-      classes: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    },
-    success: {
-      icon: <ShieldCheck className="w-5 h-5" />,
-      classes: 'bg-green-500/10 text-green-400 border-green-500/20',
-    },
-    error: {
-      icon: <AlertTriangle className="w-5 h-5" />,
-      classes: 'bg-red-500/10 text-red-400 border-red-500/20',
-    },
-  };
-
-  const config = statusConfig[status];
-  if (!config) return null;
+export function StatusDisplay({ status, message, progress = 0 }: StatusDisplayProps) {
+  if (status === 'idle') return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: 'auto' }}
-        exit={{ opacity: 0, height: 0 }}
-        transition={{ delay: 0.2 }}
-        className={`flex items-center gap-3 p-3 border rounded-md ${config.classes}`}
-      >
-        {config.icon}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-lg border p-4"
+    >
+      <div className="flex items-center gap-3">
+        {status === 'processing' && (
+          <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+        )}
+        {status === 'success' && (
+          <CheckCircle className="h-5 w-5 text-green-500" />
+        )}
+        {status === 'error' && (
+          <XCircle className="h-5 w-5 text-red-500" />
+        )}
         <p className="text-sm">{message}</p>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+      
+      {status === 'processing' && (
+        <div className="mt-3">
+          <div className="relative h-2 bg-secondary rounded-full overflow-hidden">
+            <motion.div
+              className="absolute top-0 left-0 h-full bg-green-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground mt-1 text-right">
+            {Math.round(progress)}%
+          </p>
+        </div>
+      )}
+    </motion.div>
   );
 }

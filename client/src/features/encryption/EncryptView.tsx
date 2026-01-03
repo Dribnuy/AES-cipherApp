@@ -1,11 +1,11 @@
-
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileDropzone } from '@/components/FileDropzone';
 import { KeyInput } from '@/components/KeyInput';
 import { ProcessButton } from '@/components/ProcessButton';
 import { StatusDisplay } from '@/components/StatusDisplay';
-import { encrypt } from '@/lib/aes';
+import { FileStats } from '@/components/FileStats';
+import { addOperationToHistory } from '@/components/OperationHistory';
 import { hexToBytes, bytesToHex, generateRandomKey } from '@/lib/utils';
 
 export function EncryptView() {
@@ -15,6 +15,7 @@ export function EncryptView() {
   const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     setKey(bytesToHex(generateRandomKey()));
@@ -25,6 +26,7 @@ export function EncryptView() {
     setStatus('idle');
     setMessage('');
     setDownloadUrl('');
+    setProgress(0);
   };
 
   const handleEncrypt = async () => {
@@ -47,26 +49,35 @@ export function EncryptView() {
     setStatus('processing');
     setMessage(t('processingFile'));
     setDownloadUrl('');
+    setProgress(0);
 
     try {
       const fileBuffer = Buffer.from(await file.arrayBuffer());
       const keyBytes = hexToBytes(key);
       
-      // Use a worker to avoid blocking the main thread
-      const worker = new Worker(new URL('./encryption.worker.ts', import.meta.url), { type: 'module' });
+      const worker = new Worker(
+        new URL('./encryption.worker.ts', import.meta.url), 
+        { type: 'module' }
+      );
       
       worker.onmessage = (e) => {
-        const { success, data, error } = e.data;
-        if (success) {
+        const { success, data, error, progress: workerProgress, isProgressUpdate } = e.data;
+        
+        if (isProgressUpdate) {
+          setProgress(workerProgress);
+        } else if (success) {
           const encryptedBlob = new Blob([data], { type: 'application/octet-stream' });
           setDownloadUrl(URL.createObjectURL(encryptedBlob));
           setStatus('success');
           setMessage(t('statusSuccessEncrypt'));
+          setProgress(100);
+          addOperationToHistory('encrypt', file.name);
+          worker.terminate();
         } else {
           setStatus('error');
           setMessage(error || t('errorEncryption'));
+          worker.terminate();
         }
-        worker.terminate();
       };
 
       worker.postMessage({ fileBuffer, keyBytes });
@@ -84,6 +95,7 @@ export function EncryptView() {
       
       {file && (
         <>
+          <FileStats file={file} encrypted={status === 'success'} />
           <KeyInput
             label={t('encryptionKey')}
             value={key}
@@ -91,7 +103,7 @@ export function EncryptView() {
             onGenerate={() => setKey(bytesToHex(generateRandomKey()))}
             placeholder={t('keyPlaceholder')}
           />
-          <StatusDisplay status={status} message={message} />
+          <StatusDisplay status={status} message={message} progress={progress} />
           <ProcessButton
             label={t('encryptButton')}
             status={status}

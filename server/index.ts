@@ -7,11 +7,11 @@ dotenv.config();
 
 const app = express();
 
-// Body parsing middleware
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Export a function to start the server
+
 export async function startServer(port: number) {
   try {
     if (process.env.NODE_ENV === 'production') {
@@ -26,7 +26,7 @@ export async function startServer(port: number) {
   }
 }
 
-// Start the server directly if this is the main module
+
 if (import.meta.url.endsWith(process.argv[1])) {
   console.log('Starting server...');
   startServer(Number(process.env.PORT) || 3001);

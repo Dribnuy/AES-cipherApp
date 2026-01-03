@@ -4,10 +4,8 @@ import { createServer } from 'vite';
 let viteServer;
 
 async function startDev() {
-  // Start the Express API server first
   await startServer(3001);
 
-  // Then start Vite in dev mode
   const viteServer = await createServer({
     configFile: './vite.config.js',
   });
@@ -18,7 +16,6 @@ async function startDev() {
   );
 }
 
-// Handle nodemon restarts - only needed if we're running under nodemon
 if (
   process.env.npm_lifecycle_event &&
   process.env.npm_lifecycle_event.includes('watch')
@@ -39,7 +36,6 @@ if (
       }
     }
 
-    // Allow nodemon to restart the process
     process.kill(process.pid, 'SIGUSR2');
   });
 }

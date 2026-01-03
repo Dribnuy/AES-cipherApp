@@ -1,10 +1,10 @@
-
 {
-  "appTitle": "AES FileCrypt",
+  "appTitle": "AES Encyption",
   "encryptViewTitle": "Securely encrypt your files",
   "decryptViewTitle": "Securely decrypt your files",
   "encryptTab": "Encrypt",
   "decryptTab": "Decrypt",
+  "aboutTab": "About",
   "dropzone": "Drag & drop a file here, or click to select",
   "maxFileSize": "Max file size: 500MB",
   "changeFile": "Change",
@@ -27,5 +27,20 @@
   "errorInvalidKey": "Invalid key. Must be a 32-character hex string.",
   "errorEncryption": "File encryption failed. Please try again.",
   "errorDecryption": "File decryption failed. Check the key and file.",
-  "processingFile": "Processing file..."
+  "processingFile": "Processing file...",
+  "aboutAuthor": "About Author",
+  "authorName": "Valentyn Savkun",
+  "authorGroup": "Group 2BS-23b",
+  "projectDescription": "AES FileCrypt is a secure file encryption application using AES-128 ECB mode. The project was developed as part of coursework to demonstrate practical implementation of cryptographic algorithms.",
+  "techStack": "Technology Stack",
+  "features": "Features",
+  "feature1": "AES-128 encryption algorithm implementation",
+  "feature2": "File encryption and decryption with progress tracking",
+  "feature3": "Random key generation",
+  "feature4": "Web Workers for non-blocking processing",
+  "feature5": "Responsive design with dark theme",
+  "feature6": "Multilingual support (Ukrainian/English)",
+  "welcomeTitle": "AES Encryption Suite",
+  "welcomeSubtitle": "Advanced File Security",
+  "startButton": "Enter the Matrix"
 }
