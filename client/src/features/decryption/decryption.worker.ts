@@ -6,30 +6,30 @@ self.onmessage = (e) => {
     const { fileBuffer, keyBytes } = e.data;
     const totalSize = fileBuffer.length;
     const CHUNK_SIZE = 1024 * 1024; 
-    
-    if (totalSize <= CHUNK_SIZE) {
-     
-      const decryptedData = decrypt(Buffer.from(fileBuffer), keyBytes);
-      self.postMessage({ success: true, data: decryptedData, progress: 100 });
-    } else {
+
+    const chunks: Buffer[] = [];
+    let processed = 0;
+
+    for (let i = 0; i < totalSize; i += CHUNK_SIZE) {
+   
+      const end = Math.min(i + CHUNK_SIZE, totalSize);
+      const chunk = fileBuffer.slice(i, end);
       
-      const chunks: Buffer[] = [];
-      let processed = 0;
+      const isLastChunk = end === totalSize;
+
+      const decryptedChunk = decrypt(Buffer.from(chunk), keyBytes, isLastChunk);
       
-      for (let i = 0; i < totalSize; i += CHUNK_SIZE) {
-        const end = Math.min(i + CHUNK_SIZE, totalSize);
-        const chunk = fileBuffer.slice(i, end);
-        const decryptedChunk = decrypt(Buffer.from(chunk), keyBytes);
-        chunks.push(decryptedChunk);
-        
-        processed = end;
-        const progress = (processed / totalSize) * 100;
-        self.postMessage({ progress, isProgressUpdate: true });
+      chunks.push(decryptedChunk);
+
+      processed = end;
+      if (processed % (CHUNK_SIZE * 5) === 0 || isLastChunk) {
+        self.postMessage({ progress: (processed / totalSize) * 100, isProgressUpdate: true });
       }
-      
-      const decryptedData = Buffer.concat(chunks);
-      self.postMessage({ success: true, data: decryptedData, progress: 100 });
     }
+
+    const decryptedData = Buffer.concat(chunks);
+    self.postMessage({ success: true, data: decryptedData, progress: 100 });
+    
   } catch (error) {
     self.postMessage({ 
       success: false, 

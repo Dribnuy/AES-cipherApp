@@ -24,7 +24,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   const welcomeText = t('welcomeTitle', 'AES Encryption Suite');
   const subtitle = t('welcomeSubtitle', 'Advanced File Security');
 
-  // Typewriter effect
   useEffect(() => {
     let index = 0;
     const timer = setInterval(() => {
@@ -40,7 +39,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     return () => clearInterval(timer);
   }, [welcomeText]);
 
-  // Generate floating particles
   useEffect(() => {
     const newParticles = Array.from({ length: 50 }, (_, i) => ({
       id: i,
@@ -53,7 +51,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     setParticles(newParticles);
   }, []);
 
-  // Animate particles
   useEffect(() => {
     const interval = setInterval(() => {
       setParticles(prev => prev.map(particle => ({
@@ -68,7 +65,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
-      {/* Animated background grid */}
       <div className="absolute inset-0 opacity-20">
         {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
@@ -104,7 +100,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         ))}
       </div>
 
-      {/* Floating particles */}
       {particles.map(particle => (
         <motion.div
           key={particle.id}
@@ -128,9 +123,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         />
       ))}
 
-      {/* Central content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
-        {/* Holographic logo */}
         <motion.div
           className="relative mb-12"
           initial={{ scale: 0, rotate: -180 }}
@@ -138,7 +131,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           transition={{ duration: 1.5, ease: "easeOut" }}
         >
           <div className="relative">
-            {/* Outer glow rings */}
             <motion.div
               className="absolute inset-0 rounded-full border-2 border-cyan-400"
               animate={{ rotate: 360 }}
@@ -152,7 +144,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               style={{ width: 180, height: 180, left: -40, top: -40 }}
             />
             
-            {/* Main icon */}
             <motion.div
               className="relative w-24 h-24 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-full flex items-center justify-center shadow-2xl"
               animate={{
@@ -167,7 +158,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               <Shield className="w-12 h-12 text-white" />
             </motion.div>
 
-            {/* Orbiting elements */}
             <motion.div
               className="absolute w-6 h-6 bg-cyan-400 rounded-full"
               animate={{ rotate: 360 }}
@@ -195,7 +185,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           </div>
         </motion.div>
 
-        {/* Main title with typewriter effect */}
         <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, y: 50 }}
@@ -236,7 +225,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           </motion.p>
         </motion.div>
 
-        {/* Feature icons */}
         <motion.div
           className="flex space-x-8 mb-12"
           initial={{ opacity: 0, y: 30 }}
@@ -274,7 +262,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           ))}
         </motion.div>
 
-        {/* Start button */}
         <AnimatePresence>
           {showButton && (
             <motion.div
@@ -306,7 +293,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           )}
         </AnimatePresence>
 
-        {/* Loading indicator */}
         <motion.div
           className="mt-8"
           initial={{ opacity: 0 }}
@@ -333,7 +319,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         </motion.div>
       </div>
 
-      {/* Matrix rain effect overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-10">
         {Array.from({ length: 30 }).map((_, i) => (
           <motion.div

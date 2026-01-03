@@ -200,24 +200,42 @@ function pkcs7Unpad(data: Buffer): Buffer {
   return data.slice(0, data.length - padding);
 }
 
-export function encrypt(data: Buffer, key: number[]): Buffer {
+export function encrypt(data: Buffer, key: number[], enablePadding: boolean = true): Buffer {
   if (key.length !== 16) throw new Error('Key must be 16 bytes for AES-128');
-  const paddedData = pkcs7Pad(data);
+  
+  // Додаємо padding тільки якщо це дозволено. 
+  // Якщо padding вимкнено, довжина даних ОБОВ'ЯЗКОВО має бути кратна 16.
+  let inputData = data;
+  if (enablePadding) {
+    inputData = pkcs7Pad(data);
+  } else if (data.length % 16 !== 0) {
+    throw new Error('Data length must be multiple of 16 when padding is disabled');
+  }
+
   const encrypted: Buffer[] = [];
-  for (let i = 0; i < paddedData.length; i += 16) {
-    const block = Array.from(paddedData.slice(i, i + 16));
+  for (let i = 0; i < inputData.length; i += 16) {
+    const block = Array.from(inputData.slice(i, i + 16));
     encrypted.push(Buffer.from(aesCipher(block, key)));
   }
   return Buffer.concat(encrypted);
 }
 
-export function decrypt(data: Buffer, key: number[]): Buffer {
+export function decrypt(data: Buffer, key: number[], enablePadding: boolean = true): Buffer {
   if (key.length !== 16) throw new Error('Key must be 16 bytes for AES-128');
   if (data.length % 16 !== 0) throw new Error('Data length must be a multiple of 16');
+  
   const decrypted: Buffer[] = [];
   for (let i = 0; i < data.length; i += 16) {
     const block = Array.from(data.slice(i, i + 16));
     decrypted.push(Buffer.from(aesInvCipher(block, key)));
   }
-  return pkcs7Unpad(Buffer.concat(decrypted));
+  
+  const combined = Buffer.concat(decrypted);
+  
+  // Видаляємо padding тільки якщо це було дозволено (тобто це останній шматок)
+  if (enablePadding) {
+    return pkcs7Unpad(combined);
+  }
+  
+  return combined;
 }

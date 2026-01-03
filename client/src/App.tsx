@@ -141,7 +141,6 @@ function App() {
                 ))}
               </div>
 
-              {/* Operation History */}
               <OperationHistory />
             </motion.div>
           )}

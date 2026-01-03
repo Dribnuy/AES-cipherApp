@@ -15,7 +15,6 @@ export function OperationHistory() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Load from localStorage
     const stored = localStorage.getItem('aes-operations-history');
     if (stored) {
       try {
@@ -25,11 +24,10 @@ export function OperationHistory() {
       }
     }
 
-    // Listen for new operations
     const handleNewOperation = (e: CustomEvent<Operation>) => {
       const newOp = e.detail;
       setOperations(prev => {
-        const updated = [newOp, ...prev].slice(0, 10); // Keep only last 10
+        const updated = [newOp, ...prev].slice(0, 10); 
         localStorage.setItem('aes-operations-history', JSON.stringify(updated));
         return updated;
       });
@@ -142,7 +140,6 @@ export function OperationHistory() {
   );
 }
 
-// Helper function to add operation to history
 export function addOperationToHistory(type: 'encrypt' | 'decrypt', fileName: string) {
   const operation: Operation = {
     id: Date.now().toString(),
